@@ -13,3 +13,5 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+./cmd/gen_accounts/1m_accounts.json

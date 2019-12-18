@@ -23,7 +23,7 @@ const (
 	SIGN_PASSPHRASE = `88888888`
 )
 
-var CHAIN_ID int64 = 100
+var ChainId int64 = 100
 
 type AddrKey struct {
 	Address string `json:"address"`
@@ -98,8 +98,8 @@ func main() {
 
 	flag.Parse()
 
-	CHAIN_ID = *chanIdFlag
-	fmt.Printf("The identify of chain is %d\n", CHAIN_ID)
+	ChainId = *chanIdFlag
+	fmt.Printf("The identify of chain is %d\n", ChainId)
 
 	var bp BatchProcessor
 

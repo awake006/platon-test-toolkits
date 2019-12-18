@@ -183,11 +183,11 @@ func (bp *BatchMixProcess) randomAccount(account *Account) *Account {
 
 func (bp *BatchMixProcess) sendTransaction(client *ethclient.Client, account *Account) {
 	to := bp.randomAccount(account)
-	signer := types.NewEIP155Signer(big.NewInt(CHAIN_ID))
+	signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	nonce := bp.nonceAt(client, account.address)
-	//if nonce < account.nonce {
+	// if nonce < account.nonce {
 	//	nonce = account.nonce
-	//}
+	// }
 	for i := 0; i < maxSendTransferTxns; i++ {
 		tx := types.NewTransaction(
 			nonce,
@@ -235,7 +235,7 @@ func (bp *BatchMixProcess) sendTransaction(client *ethclient.Client, account *Ac
 func (bp *BatchMixProcess) sendDelegate(client *ethclient.Client, account *Account) {
 	buf, _ := bp.stub.Delegate("10000000000000000000")
 
-	signer := types.NewEIP155Signer(big.NewInt(CHAIN_ID))
+	signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	nonce := bp.nonceAt(client, account.address)
 
 	tx, err := types.SignTx(

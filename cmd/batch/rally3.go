@@ -151,7 +151,7 @@ func (bp *Rally3Process) perform(host string) {
 	}
 	defer client.Close()
 
-	bp.getAllCandiateInfo(client)
+	bp.getAllCandidateInfo(client)
 
 	sentCh := make(chan *Account, 1000)
 	receiptCh := make(chan *ReceiptTask, 1000)
@@ -216,7 +216,7 @@ func (bp *Rally3Process) randomAddress() common.Address {
 func (bp *Rally3Process) sendTransaction(client *ethclient.Client, account *Account) {
 	cnt := 2
 	to := bp.randomAddress()
-	signer := types.NewEIP155Signer(big.NewInt(CHAIN_ID))
+	signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	nonce := bp.nonceAt(client, account.address)
 	for i := 0; i < cnt; i++ {
 		tx := types.NewTransaction(
@@ -274,7 +274,7 @@ func (bp *Rally3Process) sendDelegate(client *ethclient.Client, account *Account
 	node := bp.getNode(account.delegates)
 	buf, _ := util.Delegate(node.NodeID, "10000000000000000000")
 
-	signer := types.NewEIP155Signer(big.NewInt(CHAIN_ID))
+	signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	nonce := bp.nonceAt(client, account.address)
 
 	tx, err := types.SignTx(
@@ -318,7 +318,7 @@ func (bp *Rally3Process) sendWithdrewDelegate(client *ethclient.Client, account 
 	node := bp.getNode(account.withdrewDelegates)
 	buf, _ := util.WithdrewDelegate(node.NodeID, node.StakingNum, "10000000000000000000")
 
-	signer := types.NewEIP155Signer(big.NewInt(CHAIN_ID))
+	signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	nonce := bp.nonceAt(client, account.address)
 
 	tx, err := types.SignTx(
@@ -358,7 +358,7 @@ func (bp *Rally3Process) sendWithdrewDelegate(client *ethclient.Client, account 
 	}()
 }
 
-func (bp *Rally3Process) getCandiateInfo(client *ethclient.Client, nodeID discover.NodeID, account *Account) uint64 {
+func (bp *Rally3Process) getCandidateInfo(client *ethclient.Client, nodeID discover.NodeID, account *Account) uint64 {
 	buf, _ := util.GetCandiateInfo(nodeID)
 
 	msg := ethereum.CallMsg{
@@ -394,9 +394,9 @@ func (bp *Rally3Process) getCandiateInfo(client *ethclient.Client, nodeID discov
 	return can.Ret.StakingBlockNum
 }
 
-func (bp *Rally3Process) getAllCandiateInfo(client *ethclient.Client) {
+func (bp *Rally3Process) getAllCandidateInfo(client *ethclient.Client) {
 	for _, node := range bp.nodes {
-		node.StakingNum = bp.getCandiateInfo(client, node.NodeID, bp.accounts[0])
+		node.StakingNum = bp.getCandidateInfo(client, node.NodeID, bp.accounts[0])
 	}
 }
 

@@ -123,7 +123,7 @@ func (bp *StakingBatchProcess) nonceAt(client *ethclient.Client, addr common.Add
 func (bp *StakingBatchProcess) delegate(client *ethclient.Client, account *Account) {
 	buf, _ := bp.stub.Delegate("10000000000000000000")
 
-	signer := types.NewEIP155Signer(big.NewInt(CHAIN_ID))
+	signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	nonce := bp.nonceAt(client, account.address)
 
 	tx, err := types.SignTx(
@@ -184,7 +184,7 @@ func (bp *StakingBatchProcess) getTransactionReceipt(client *ethclient.Client, t
 			fmt.Printf("%s\n", result)
 			return
 		}
-		//fmt.Printf("Staking txHash: %s, result: %s\n", task.hash.String(), receipt.Logs[0].Data[2:])
+		// fmt.Printf("Staking txHash: %s, result: %s\n", task.hash.String(), receipt.Logs[0].Data[2:])
 	}
 
 	go func() {

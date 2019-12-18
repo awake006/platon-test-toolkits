@@ -117,8 +117,26 @@
 			"revisionTime": "2019-12-11T01:36:41Z"
 		},
 		{
+			"checksumSHA1": "oWkGUer/kKMXNYYlteeOC63E5Qw=",
+			"path": "github.com/PlatONnetwork/PlatON-Go/crypto/bn256/cloudflare",
+			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
+			"revisionTime": "2019-12-11T01:36:41Z"
+		},
+		{
+			"checksumSHA1": "mAtusaZ4r9gG+jona5HoYpm6lYg=",
+			"path": "github.com/PlatONnetwork/PlatON-Go/crypto/bn256/google",
+			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
+			"revisionTime": "2019-12-11T01:36:41Z"
+		},
+		{
 			"checksumSHA1": "jUfo3g6LFlYcCcDbmBmcgIxCn/8=",
 			"path": "github.com/PlatONnetwork/PlatON-Go/crypto/ecies",
+			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
+			"revisionTime": "2019-12-11T01:36:41Z"
+		},
+		{
+			"checksumSHA1": "I8jm/qseLEk+PFC9QHoToSDoKdw=",
+			"path": "github.com/PlatONnetwork/PlatON-Go/crypto/rfc6979",
 			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
 			"revisionTime": "2019-12-11T01:36:41Z"
 		},
@@ -261,18 +279,23 @@
 			"revisionTime": "2019-12-11T01:36:41Z"
 		},
 		{
-			"checksumSHA1": "pWw3xLiP73NGFM6Tgbz+xznjHKE=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/aristanetworks/goarista/monotime",
+			"checksumSHA1": "YdWmkLgfIqoZgQA0bWB71jCizpc=",
 			"path": "github.com/aristanetworks/goarista/monotime",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "2e9fd846018e44d112471ae33a76a683b34e61d3",
+			"revisionTime": "2019-05-28T20:05:16Z"
 		},
 		{
-			"checksumSHA1": "eVH6ttDfEiYTzPMf4UO0W6mrpTk=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/btcsuite/btcd/btcec",
+			"checksumSHA1": "PR90TnMKwLpwRrz+UetnW+2GyBE=",
 			"path": "github.com/btcsuite/btcd/btcec",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "16327141da8ce4b46b5bac57ba01352943465d9e",
+			"revisionTime": "2019-05-23T00:01:18Z"
+		},
+		{
+			"checksumSHA1": "Lps/+JqMRVlrXgO/+cazYcfsglg=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "5b93e2dc01fd8fbf32aa74a198b0ebe78f6f6b6f",
+			"revisionTime": "2018-12-05T23:58:52Z"
 		},
 		{
 			"checksumSHA1": "Bq3NY9Of6IGPq6uB7Xsb2zznDnM=",
@@ -296,32 +319,34 @@
 			"revisionTime": "2019-12-11T01:36:41Z"
 		},
 		{
-			"checksumSHA1": "u50p7C1VNNzFlOhzGP8VIne1jn4=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/go-stack/stack",
+			"checksumSHA1": "h0OyM0uf40lnwTU89ENuiATar5Q=",
 			"path": "github.com/go-stack/stack",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "2fee6af1a9795aafbe0253a0cfbdf668e1fb8a9a",
+			"revisionTime": "2018-08-26T13:48:48Z"
 		},
 		{
-			"checksumSHA1": "dc2IlRsq83bCS8sFMB3g/q6mKh0=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/golang/protobuf/proto",
+			"checksumSHA1": "Wp97rIwFg54dNwuCeR9Vslaehtw=",
 			"path": "github.com/golang/protobuf/proto",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "347cf4a86c1cb8d262994d8ef5924d4576c5b331",
+			"revisionTime": "2019-01-09T07:22:47Z"
 		},
 		{
-			"checksumSHA1": "LxkM6a08md/bnMaGbjB6iVcCn40=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/golang/protobuf/protoc-gen-go/descriptor",
+			"checksumSHA1": "NmOpWW+Eg+Na/v2K/PIzybRV8gM=",
 			"path": "github.com/golang/protobuf/protoc-gen-go/descriptor",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "347cf4a86c1cb8d262994d8ef5924d4576c5b331",
+			"revisionTime": "2019-01-09T07:22:47Z"
 		},
 		{
-			"checksumSHA1": "OV+/R43DDDJ/Gxrx9oQob/K7sL0=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/golang/snappy",
+			"checksumSHA1": "qLQAhxqhn+iT9QvRUcWZaIhi0Yw=",
 			"path": "github.com/golang/snappy",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "2a8bb927dd31d8daada140a5d09578521ce5c36a",
+			"revisionTime": "2019-02-18T23:22:22Z"
+		},
+		{
+			"checksumSHA1": "bcihEmxEmUm3UKca45utc9eRyXY=",
+			"path": "github.com/google/uuid",
+			"revision": "9b3b1e0f5f99ae461456d768e7d301a7acdaa2d8",
+			"revisionTime": "2018-09-17T14:00:05Z"
 		},
 		{
 			"checksumSHA1": "pXPPxTaLl/jmyXGK/LQyBWaxmUI=",
@@ -387,25 +412,29 @@
 			"revisionTime": "2019-12-11T01:36:41Z"
 		},
 		{
-			"checksumSHA1": "bGl82/H2WdwCxhmG1+YViHJsWUE=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/mattn/go-colorable",
+			"checksumSHA1": "3sBjOBjrog/ytGVy7+IyRMOMik8=",
 			"path": "github.com/mattn/go-colorable",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "8029fb3788e5a4a9c00e415f586a6d033f5d38b3",
+			"revisionTime": "2019-05-24T00:26:58Z"
 		},
 		{
-			"checksumSHA1": "p92Lt98zWqW2U1xuCJGfBAMeM38=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/mattn/go-isatty",
+			"checksumSHA1": "LkbotKu3JQxXEZZ9P40yhnFOycY=",
 			"path": "github.com/mattn/go-isatty",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "3fb116b820352b7f0c281308a4d6250c22d94e27",
+			"revisionTime": "2018-08-30T10:17:45Z"
 		},
 		{
-			"checksumSHA1": "eVoyhpCbyPg6D3P63EStHNO6iIQ=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/pborman/uuid",
+			"checksumSHA1": "Bssc82hB3vC+9pRqIvRja8VlmTU=",
 			"path": "github.com/pborman/uuid",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "8b1b92947f46224e3b97bb1a3a5b0382be00d31e",
+			"revisionTime": "2018-09-18T08:52:46Z"
+		},
+		{
+			"checksumSHA1": "R3yk3OJzuq4MVfVGX5AhkkYv1ko=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "5b93e2dc01fd8fbf32aa74a198b0ebe78f6f6b6f",
+			"revisionTime": "2018-12-05T23:58:52Z"
 		},
 		{
 			"checksumSHA1": "rJlBDt3X/GNXqPfjY8pM80sfzJc=",
@@ -443,102 +472,100 @@
 			"revisionTime": "2019-12-11T01:36:41Z"
 		},
 		{
-			"checksumSHA1": "rruIpRx1bkyd8xC0l6laomLYTnE=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb",
+			"checksumSHA1": "kXYrjOVg/uC3B6zzyczSC4pk0n0=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "5b93e2dc01fd8fbf32aa74a198b0ebe78f6f6b6f",
+			"revisionTime": "2018-12-05T23:58:52Z"
+		},
+		{
+			"checksumSHA1": "NlrzGRpnkW2ceBYow2sZmgJr3tw=",
+			"path": "github.com/stretchr/testify/require",
+			"revision": "5b93e2dc01fd8fbf32aa74a198b0ebe78f6f6b6f",
+			"revisionTime": "2018-12-05T23:58:52Z"
+		},
+		{
+			"checksumSHA1": "J0kszFqb75zaskY/h7CGVtY62bk=",
 			"path": "github.com/syndtr/goleveldb/leveldb",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "mOKzu1iJk0CSn1TImVijMggfvhY=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/cache",
 			"path": "github.com/syndtr/goleveldb/leveldb/cache",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "KGzbILVtQY1EzrH1Fi5UFpBoKrk=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/comparer",
 			"path": "github.com/syndtr/goleveldb/leveldb/comparer",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "KPLIq+6AiJ0T3M8ujkuPkUHExZg=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/errors",
 			"path": "github.com/syndtr/goleveldb/leveldb/errors",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "oyJ4n6MbG5FL+0SEZWgeMhJbgj4=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/filter",
 			"path": "github.com/syndtr/goleveldb/leveldb/filter",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "gjtCOH3j2uGKyBFFzO6Dkm1cGg8=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/iterator",
 			"path": "github.com/syndtr/goleveldb/leveldb/iterator",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "HiQVGWLBnlhm0isR9T7mAeAjoTo=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/journal",
 			"path": "github.com/syndtr/goleveldb/leveldb/journal",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "Z0fVd15v1zCf8SAEJNMWzRGpgE0=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/memdb",
 			"path": "github.com/syndtr/goleveldb/leveldb/memdb",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "aDO67OGQ1pPqhTkUlkx7rX5LIFY=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/opt",
 			"path": "github.com/syndtr/goleveldb/leveldb/opt",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "YxotEUXLwQMc2aw+CsosLlJpWIQ=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/storage",
 			"path": "github.com/syndtr/goleveldb/leveldb/storage",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "5I1zCx72FubXsd6yjBrzh9NT/LI=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/table",
 			"path": "github.com/syndtr/goleveldb/leveldb/table",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "mXrGK0bZN9FtKwifjw//2qwYroQ=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/github.com/syndtr/goleveldb/leveldb/util",
 			"path": "github.com/syndtr/goleveldb/leveldb/util",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "c3a204f8e96543bb0cc090385c001078f184fc46",
+			"revisionTime": "2019-03-18T03:00:20Z"
 		},
 		{
 			"checksumSHA1": "1MGpGDQqnUoRpv7VEcQrXOBydXE=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/golang.org/x/crypto/pbkdf2",
 			"path": "golang.org/x/crypto/pbkdf2",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "f99c8df09eb5bff426315721bfa5f16a99cad32c",
+			"revisionTime": "2019-04-11T19:51:25Z"
 		},
 		{
-			"checksumSHA1": "dHh6VeHcbNg11miGjGEl8LbPe7w=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/golang.org/x/crypto/scrypt",
+			"checksumSHA1": "o8ysWPosGVxkSVMZHfp2tYHBTu8=",
 			"path": "golang.org/x/crypto/scrypt",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "f99c8df09eb5bff426315721bfa5f16a99cad32c",
+			"revisionTime": "2019-04-11T19:51:25Z"
 		},
 		{
 			"checksumSHA1": "Y+HGqEkYM15ir+J93MEaHdyFy0c=",
@@ -569,18 +596,21 @@
 			"revisionTime": "2019-12-11T01:36:41Z"
 		},
 		{
-			"checksumSHA1": "7EZyXN0EmZLgGxZxK01IJua4c8o=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/golang.org/x/net/websocket",
+			"checksumSHA1": "F+tqxPGFt5x7DKZakbbMmENX1oQ=",
 			"path": "golang.org/x/net/websocket",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": ""
 		},
 		{
-			"checksumSHA1": "r1jWq0V3AI5DLN0aCnXXMH/is9Q=",
-			"origin": "github.com/PlatONnetwork/PlatON-Go/vendor/golang.org/x/sys/unix",
+			"checksumSHA1": "c2uqM0KcVJ2SFu/9Nt4w63GZ9xo=",
+			"path": "golang.org/x/sys/cpu",
+			"revision": "9eb1bfa1ce65ae8a6ff3114b0aaf9a41a6cf3560",
+			"revisionTime": "2019-03-29T02:42:46Z"
+		},
+		{
+			"checksumSHA1": "vYYwyICPulixLe5cJS04LaY66aU=",
 			"path": "golang.org/x/sys/unix",
-			"revision": "68311c9327246093ce2eadbd1203aac0194becfb",
-			"revisionTime": "2019-12-11T01:36:41Z"
+			"revision": "9eb1bfa1ce65ae8a6ff3114b0aaf9a41a6cf3560",
+			"revisionTime": "2019-03-29T02:42:46Z"
 		},
 		{
 			"checksumSHA1": "Mr4ur60bgQJnQFfJY0dGtwWwMPE=",

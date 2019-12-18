@@ -151,7 +151,7 @@ func (sb *SideBatch) loop() {
 			log.Printf("Failure call debug_isConsensusNode%s", err)
 			return false
 		}
-		//log.Printf("Current node is proposer? %v", proposer)
+		// log.Printf("Current node is proposer? %v", proposer)
 		return c
 
 	}
@@ -162,10 +162,10 @@ func (sb *SideBatch) loop() {
 			return
 		case <-timer.C:
 			if consensus() {
-				//sb.process.SetSendInterval(consensusSendInterval)
+				// sb.process.SetSendInterval(consensusSendInterval)
 				sb.process.Resume()
 			} else {
-				//sb.process.SetSendInterval(defaultSendInterval)
+				// sb.process.SetSendInterval(defaultSendInterval)
 				sb.process.Pause()
 			}
 		}
@@ -174,7 +174,7 @@ func (sb *SideBatch) loop() {
 
 func (sb *SideBatch) createStaking(client *ethclient.Client, stub *util.StakingStub, account *Account) {
 	buf, _ := stub.Create(sb.blsKey, sb.nodeName)
-	signer := types.NewEIP155Signer(big.NewInt(CHAIN_ID))
+	signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	tx, err := types.SignTx(
 		types.NewTransaction(
 			0,

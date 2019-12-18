@@ -27,7 +27,7 @@ type BatchProcess struct {
 	sents    int32
 	receipts int32
 
-	sendInterval atomic.Value //time.Duration
+	sendInterval atomic.Value // time.Duration
 
 	paused bool
 	lock   sync.Mutex
@@ -168,11 +168,11 @@ func (bp *BatchProcess) randomAccount(account *Account) *Account {
 
 func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Account) {
 	to := bp.randomAccount(account)
-	signer := types.NewEIP155Signer(big.NewInt(CHAIN_ID))
+	signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	nonce := bp.nonceAt(client, account.address)
-	//if nonce < account.nonce {
+	// if nonce < account.nonce {
 	//	nonce = account.nonce
-	//}
+	// }
 	for i := 0; i < maxSendTxns; i++ {
 		tx := types.NewTransaction(
 			nonce,
@@ -198,7 +198,7 @@ func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Accou
 			}()
 			return
 		}
-		//account.nonce = nonce + 1
+		// account.nonce = nonce + 1
 		atomic.AddInt32(&bp.sents, 1)
 
 		nonce += 1

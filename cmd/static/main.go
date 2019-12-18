@@ -37,9 +37,9 @@ type BlockInfo struct {
 	Miner       common.Address `json:"miner"`
 	Interval    uint64         `json:"interval"`
 	TimestampMs uint64         `json:"timestamp_ms"`
-	NodeID      string         `json:"node_id,omityempty"`
-	NodeName    string         `json:"node_name,omityempty"`
-	Host        string         `json:"host,omityempty"`
+	NodeID      string         `json:"node_id,omitempty"`
+	NodeName    string         `json:"node_name,omitempty"`
+	Host        string         `json:"host,omitempty"`
 }
 
 type BlockList []*BlockInfo

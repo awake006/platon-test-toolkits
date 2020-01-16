@@ -54,7 +54,6 @@ func NewSideBatch(
 
 func (sb *SideBatch) Start() {
 	sb.checkMining()
-	time.Sleep(time.Hour * 5)
 	sb.process.Start()
 
 	if sb.onlyConsensus {

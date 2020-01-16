@@ -56,7 +56,7 @@ func (stub *StakingStub) Create(blsKey, nodeName string) ([]byte, error) {
 	st, _ := big.NewInt(0).SetString("5000000000000000000000000", 10)
 	amount, _ := rlp.EncodeToBytes(st)
 	programVersion, _ := rlp.EncodeToBytes(params.GenesisVersion)
-
+	rewardPer, _ := rlp.EncodeToBytes(uint64(1000))
 	var versionSign common.VersionSign
 	buf, err := crypto.Sign(node.RlpHash(params.GenesisVersion).Bytes(), stub.PrivateKey)
 	if err != nil {
@@ -96,6 +96,7 @@ func (stub *StakingStub) Create(blsKey, nodeName string) ([]byte, error) {
 	transactionParams = append(transactionParams, website)
 	transactionParams = append(transactionParams, details)
 	transactionParams = append(transactionParams, amount)
+	transactionParams = append(transactionParams, rewardPer)
 	transactionParams = append(transactionParams, programVersion)
 	transactionParams = append(transactionParams, sign)
 	transactionParams = append(transactionParams, blsPub)

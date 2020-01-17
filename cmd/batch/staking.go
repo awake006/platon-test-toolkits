@@ -45,7 +45,7 @@ func NewStakingBatchProcess(accounts AccountList, hosts []string, nodeKey string
 }
 
 func (bp *StakingBatchProcess) Start() {
-	time.Sleep(time.Hour * 5)
+	// time.Sleep(time.Hour * 5)
 	go bp.report()
 
 	for _, host := range bp.hosts {

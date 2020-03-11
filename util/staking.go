@@ -11,7 +11,6 @@ import (
 	"github.com/PlatONnetwork/PlatON-Go/crypto/bls"
 	"github.com/PlatONnetwork/PlatON-Go/node"
 	"github.com/PlatONnetwork/PlatON-Go/p2p/discover"
-	"github.com/PlatONnetwork/PlatON-Go/params"
 	"github.com/PlatONnetwork/PlatON-Go/rlp"
 )
 
@@ -55,10 +54,10 @@ func (stub *StakingStub) Create(blsKey, nodeName string) ([]byte, error) {
 	details, _ := rlp.EncodeToBytes(nodeName + " super node")
 	st, _ := big.NewInt(0).SetString("5000000000000000000000000", 10)
 	amount, _ := rlp.EncodeToBytes(st)
-	programVersion, _ := rlp.EncodeToBytes(params.GenesisVersion)
+	programVersion, _ := rlp.EncodeToBytes(uint(2562))
 	rewardPer, _ := rlp.EncodeToBytes(uint64(1000))
 	var versionSign common.VersionSign
-	buf, err := crypto.Sign(node.RlpHash(params.GenesisVersion).Bytes(), stub.PrivateKey)
+	buf, err := crypto.Sign(node.RlpHash(uint(2562)).Bytes(), stub.PrivateKey)
 	if err != nil {
 		return nil, err
 	}

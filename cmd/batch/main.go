@@ -24,6 +24,7 @@ const (
 )
 
 var ChainId int64 = 100
+var ProgramVersion = uint32(2562)
 
 type AddrKey struct {
 	Address string `json:"address"`
@@ -95,10 +96,13 @@ func main() {
 	randAccountsFlag := flag.String("rand_accounts", "", "A file store account's address")
 	randIdxFlag := flag.Int("rand_idx", 0, "Index of random accounts")
 	delegateNodes := flag.String("delegate_nodes", "", "A file store a list of node ID for delegate")
+	programVersionFlag := flag.Int64("param_version", 2562, "create staking program version")
+	stakingFileFlag := flag.String("staking_file", "", "batch staking node file")
 
 	flag.Parse()
 
 	ChainId = *chanIdFlag
+	ProgramVersion = uint32(*programVersionFlag)
 	fmt.Printf("The identify of chain is %d\n", ChainId)
 
 	var bp BatchProcessor
@@ -169,6 +173,8 @@ func main() {
 			*nodeNameFlag,
 			*onlyConsensusFlag,
 			*stakingFlag)
+	case "batch_staking":
+		bp = NewBatchStaking(*stakingFileFlag, *urlFlag, ProgramVersion)
 	default:
 		log.Fatalf("Unexpected cmd %s", *cmdFlag)
 		return

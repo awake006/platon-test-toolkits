@@ -6,10 +6,8 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/PlatONnetwork/PlatON-Go/core/types"
 	"github.com/PlatONnetwork/PlatON-Go/ethclient"
 	"github.com/PlatONnetwork/PlatON-Go/rpc"
-	"github.com/awake006/platon-test-toolkits/util"
 )
 
 var (
@@ -86,20 +84,7 @@ func (sb *SideBatch) checkMining() {
 	}
 	defer client.Close()
 
-	staking := false
-	stub := util.NewStakingStub(sb.nodeKey)
-
 	for {
-		if !staking && sb.staking {
-			if _, err := client.BlockByNumber(context.Background(), big.NewInt(5)); err != nil {
-				time.Sleep(100 * time.Millisecond)
-				continue
-			}
-
-			sb.createStaking(client, stub, sb.account)
-			staking = true
-		}
-
 		number := big.NewInt(100)
 		block, err := client.BlockByNumber(context.Background(), number)
 		if err != nil {
@@ -130,19 +115,6 @@ func (sb *SideBatch) loop() {
 
 	timer := time.NewTicker(1 * time.Second)
 
-	/*
-		stopNumber := big.NewInt(int64(stopNumber))
-		arrived := func() bool {
-			block, err := client.BlockByNumber(context.Background(), stopNumber)
-			if err != nil {
-				return false
-			}
-			if block != nil && err == nil {
-				return true
-			}
-			return false
-		}*/
-
 	consensus := func() bool {
 		var c bool
 		err := client.Call(&c, "debug_isConsensusNode")
@@ -167,52 +139,6 @@ func (sb *SideBatch) loop() {
 				// sb.process.SetSendInterval(defaultSendInterval)
 				sb.process.Pause()
 			}
-		}
-	}
-}
-
-func (sb *SideBatch) createStaking(client *ethclient.Client, stub *util.StakingStub, account *Account) {
-	buf, _ := stub.Create(sb.blsKey, sb.nodeName)
-	signer := types.NewEIP155Signer(big.NewInt(ChainId))
-	tx, err := types.SignTx(
-		types.NewTransaction(
-			0,
-			contractAddr,
-			big.NewInt(1),
-			103496,
-			big.NewInt(500000000000),
-			buf),
-		signer,
-		account.privateKey)
-	if err != nil {
-		log.Printf("sign tx error: %v", err)
-		return
-	}
-
-	err = client.SendTransaction(context.Background(), tx)
-	if err != nil {
-		log.Printf("send create staking transaction error %v", err)
-		return
-	}
-
-	t := time.Now()
-	timer := time.NewTimer(100 * time.Millisecond)
-	defer timer.Stop()
-	for {
-		select {
-		case <-timer.C:
-			_, err = client.TransactionReceipt(context.Background(), tx.Hash())
-			if err == nil {
-				log.Println("create staking success!!!")
-				return
-			}
-			if time.Since(t) > 120*time.Second {
-				log.Printf("Get transaction receipt timeout %s", tx.Hash().String())
-				return
-			}
-			timer.Reset(100 * time.Millisecond)
-		case <-sb.exit:
-			return
 		}
 	}
 }

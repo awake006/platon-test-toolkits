@@ -20,6 +20,8 @@ type StakingStub struct {
 	Address    common.Address
 }
 
+var version = uint32(2816)
+
 func NewStakingStub(privateKey string) *StakingStub {
 	pk, nodeId, addr, err := parsePrivateKey(privateKey)
 	if err != nil {
@@ -54,10 +56,10 @@ func (stub *StakingStub) Create(blsKey, nodeName string) ([]byte, error) {
 	details, _ := rlp.EncodeToBytes(nodeName + " super node")
 	st, _ := big.NewInt(0).SetString("5000000000000000000000000", 10)
 	amount, _ := rlp.EncodeToBytes(st)
-	programVersion, _ := rlp.EncodeToBytes(uint(2562))
+	programVersion, _ := rlp.EncodeToBytes(version)
 	rewardPer, _ := rlp.EncodeToBytes(uint64(1000))
 	var versionSign common.VersionSign
-	buf, err := crypto.Sign(node.RlpHash(uint(2562)).Bytes(), stub.PrivateKey)
+	buf, err := crypto.Sign(node.RlpHash(version).Bytes(), stub.PrivateKey)
 	if err != nil {
 		return nil, err
 	}

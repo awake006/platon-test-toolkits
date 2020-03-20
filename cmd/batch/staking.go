@@ -23,10 +23,10 @@ type BatchStaking struct {
 type StakingConfigList []*StakingConfig
 
 type StakingConfig struct {
-	Nodekey  string   `json:nodekey`
-	Blskey   string   `json:blskey`
-	NodeName string   `json:node_name`
-	Addr     *AddrKey `json: account`
+	Nodekey  string   `json:"nodekey"`
+	Blskey   string   `json:"blskey"`
+	NodeName string   `json:"node_name"`
+	Addr     *AddrKey `json:"account"`
 }
 
 func NewBatchStaking(stakingFile, url string, programVersion uint32) *BatchStaking {

@@ -55,6 +55,7 @@ func (bp *StakingBatchProcess) Start() {
 		}
 		time.Sleep(time.Second * 1)
 	}
+	fmt.Println("start batch")
 	go bp.report()
 
 	for _, host := range bp.hosts {

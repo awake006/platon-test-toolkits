@@ -49,6 +49,7 @@ func (bp *StakingBatchProcess) Start() {
 	if err != nil {
 		panic(err.Error())
 	}
+	fmt.Println("waiting batch")
 	for {
 		if block, err := client.BlockByNumber(context.Background(), big.NewInt(2000)); err == nil && block != nil {
 			break

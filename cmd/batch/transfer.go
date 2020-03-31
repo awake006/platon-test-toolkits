@@ -52,6 +52,19 @@ func NewBatchProcess(accounts AccountList, hosts []string) *BatchProcess {
 }
 
 func (bp *BatchProcess) Start() {
+
+	client, err := ethclient.Dial(bp.hosts[0])
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Println("waiting batch")
+	for {
+		if block, err := client.BlockByNumber(context.Background(), big.NewInt(10000)); err == nil && block != nil {
+			break
+		}
+		time.Sleep(time.Second * 1)
+	}
+	fmt.Println("start batch")
 	go bp.report()
 
 	for _, host := range bp.hosts {

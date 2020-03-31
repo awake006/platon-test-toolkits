@@ -38,6 +38,6 @@ ${BATCH_BIN} -cmd ${USE_CMD} \
 	-chain_id ${CHAINID} \
 	-rand_idx ${R_IDX} \
 	-private_key ${PRIVATE_KEY} \
-	-program_version ${PROGRAM_VERSION}
+	-program_version ${PROGRAM_VERSION} \
     -delegate_nodes /data/delegate_nodes.txt \
     ${STAKING} ${ONLY_CONSENSUS} ${DELEGATE} ${R_ACCOUNTS_FLAG}

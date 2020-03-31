@@ -172,7 +172,7 @@ func main() {
 			*onlyConsensusFlag,
 			*stakingFlag)
 	case "batch_staking":
-		bp = NewBatchStaking(*nodeKeyFlag, *blsKeyFlag, *nodeNameFlag, *privateKeyFlag, *urlFlag, *programVersionFlag)
+		bp = NewBatchStaking(*nodeKeyFlag, *blsKeyFlag, *nodeNameFlag, *privateKeyFlag, *urlFlag, uint32(*programVersionFlag))
 	default:
 		log.Fatalf("Unexpected cmd %s", *cmdFlag)
 		return

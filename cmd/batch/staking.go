@@ -29,6 +29,7 @@ type StakingConfig struct {
 }
 
 func NewBatchStaking(nodekey, blskey, nodeName, privateKey, url string, programVersion uint32) *BatchStaking {
+	fmt.Printf("program version: %d \n", programVersion)
 	stakingConf := &StakingConfig{
 		Nodekey:    nodekey,
 		Blskey:     blskey,

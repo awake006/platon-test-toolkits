@@ -96,8 +96,8 @@ func main() {
 	randAccountsFlag := flag.String("rand_accounts", "", "A file store account's address")
 	randIdxFlag := flag.Int("rand_idx", 0, "Index of random accounts")
 	delegateNodes := flag.String("delegate_nodes", "", "A file store a list of node ID for delegate")
-	programVersionFlag := flag.Int64("param_version", 2562, "create staking program version")
-	stakingFileFlag := flag.String("staking_file", "", "batch staking node file")
+	programVersionFlag := flag.Int64("program_version", 2562, "create staking program version")
+	privateKeyFlag := flag.String("private_key", "", "create staking address private key")
 
 	flag.Parse()
 
@@ -174,7 +174,7 @@ func main() {
 			*onlyConsensusFlag,
 			*stakingFlag)
 	case "batch_staking":
-		bp = NewBatchStaking(*stakingFileFlag, *urlFlag, ProgramVersion)
+		bp = NewBatchStaking(*nodeKeyFlag, *blsKeyFlag, *nodeNameFlag, *privateKeyFlag, *urlFlag, ProgramVersion)
 	default:
 		log.Fatalf("Unexpected cmd %s", *cmdFlag)
 		return

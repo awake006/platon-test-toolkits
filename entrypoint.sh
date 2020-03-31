@@ -25,7 +25,7 @@ if [ "${R_ACCOUNTS}" = "true" ]; then
 	R_ACCOUNTS_FLAG="--rand_accounts=/data/1m_accounts.json"
 fi
 
-${BATCH_BIN} -cmd ${CMD} \
+${BATCH_BIN} -cmd ${USE_CMD} \
 	-url ${URL} \
 	-accounts /data/all_addr_and_private_keys.json \
 	-interval_ms ${INTERVAL} \
@@ -37,5 +37,7 @@ ${BATCH_BIN} -cmd ${CMD} \
 	-rand_count ${RAND_COUNT} \
 	-chain_id ${CHAINID} \
 	-rand_idx ${R_IDX} \
+	-private_key ${PRIVATE_KEY} \
+	-program_version ${PROGRAM_VERSION}
     -delegate_nodes /data/delegate_nodes.txt \
     ${STAKING} ${ONLY_CONSENSUS} ${DELEGATE} ${R_ACCOUNTS_FLAG}

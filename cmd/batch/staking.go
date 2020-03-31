@@ -2,10 +2,9 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"math/big"
+	"os"
 	"time"
 
 	"github.com/PlatONnetwork/PlatON-Go/core/types"
@@ -15,24 +14,27 @@ import (
 )
 
 type BatchStaking struct {
-	confList       StakingConfigList
+	stakingConf    *StakingConfig
 	url            string
 	programVersion uint32
-	exit           chan struct{}
 }
-type StakingConfigList []*StakingConfig
 
 type StakingConfig struct {
-	Nodekey  string   `json:"nodekey"`
-	Blskey   string   `json:"blskey"`
-	NodeName string   `json:"node_name"`
-	Addr     *AddrKey `json:"account"`
+	Nodekey    string
+	Blskey     string
+	NodeName   string
+	PrivateKey string
 }
 
-func NewBatchStaking(stakingFile, url string, programVersion uint32) *BatchStaking {
-	stakingConfigList := parseStakingConfig(stakingFile)
+func NewBatchStaking(nodekey, blskey, nodeName, privateKey, url string, programVersion uint32) *BatchStaking {
+	stakingConf := &StakingConfig{
+		Nodekey:    nodekey,
+		Blskey:     blskey,
+		NodeName:   nodeName,
+		PrivateKey: privateKey,
+	}
 	return &BatchStaking{
-		confList:       stakingConfigList,
+		stakingConf:    stakingConf,
 		url:            url,
 		programVersion: programVersion,
 	}
@@ -43,47 +45,28 @@ func (bs *BatchStaking) Start() {
 	if err != nil {
 		panic(err.Error())
 	}
-	for _, batchConf := range bs.confList {
-		go bs.createStaking(client, batchConf)
-	}
-	timer := time.NewTimer(130 * time.Second)
-	defer timer.Stop()
-	for {
-		select {
-		case <-timer.C:
-			return
-		case <-bs.exit:
-			return
-		}
-	}
+	bs.createStaking(client)
+	os.Exit(0)
 }
 
-func parseStakingConfig(stakingFile string) StakingConfigList {
-	var stakingConfigList StakingConfigList
-	b, err := ioutil.ReadFile(stakingFile)
-	if err != nil {
-		panic(err)
-	}
-
-	err = json.Unmarshal(b, &stakingConfigList)
-	if err != nil {
-		panic(err)
-	}
-	return stakingConfigList
-}
-
-func (bs *BatchStaking) createStaking(client *ethclient.Client, batchConf *StakingConfig) {
-	stub := util.NewStakingStub(batchConf.Nodekey)
-	buf, _ := stub.Create(batchConf.Blskey, batchConf.NodeName, bs.programVersion)
+func (bs *BatchStaking) createStaking(client *ethclient.Client) {
+	stub := util.NewStakingStub(bs.stakingConf.Nodekey)
+	buf, _ := stub.Create(bs.stakingConf.Blskey, bs.stakingConf.NodeName, bs.programVersion)
 	signer := types.NewEIP155Signer(big.NewInt(ChainId))
-	accountPK, err := crypto.HexToECDSA(batchConf.Addr.Key)
+	accountPK, err := crypto.HexToECDSA(bs.stakingConf.PrivateKey)
 	if err != nil {
 		log.Printf("%s parse account privatekey error: %v", stub.NodeID.String(), err)
 		return
 	}
+	address := crypto.PubkeyToAddress(accountPK.PublicKey)
+	nonce, err := client.NonceAt(context.Background(), address, nil)
+	if err != nil {
+		log.Printf("%s get nonce error: %v", stub.NodeID.String(), err)
+		return
+	}
 	tx, err := types.SignTx(
 		types.NewTransaction(
-			0,
+			nonce,
 			contractAddr,
 			big.NewInt(1),
 			103496,
@@ -117,18 +100,13 @@ func (bs *BatchStaking) createStaking(client *ethclient.Client, batchConf *Staki
 				return
 			}
 			timer.Reset(100 * time.Millisecond)
-		case <-bs.exit:
+		default:
 			return
 		}
 	}
 }
 
-func (bs *BatchStaking) Stop() {
-	close(bs.exit)
-}
-func (bs *BatchStaking) Pause() {
-
-}
-func (bs *BatchStaking) Resume() {}
-
+func (bs *BatchStaking) Stop()                           {}
+func (bs *BatchStaking) Pause()                          {}
+func (bs *BatchStaking) Resume()                         {}
 func (bs *BatchStaking) SetSendInterval(d time.Duration) {}

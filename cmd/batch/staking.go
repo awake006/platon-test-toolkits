@@ -41,9 +41,29 @@ func NewBatchStaking(nodekey, blskey, nodeName, privateKey, url string, programV
 }
 
 func (bs *BatchStaking) Start() {
-	client, err := ethclient.Dial(bs.url)
-	if err != nil {
-		panic(err.Error())
+	var client *ethclient.Client
+	var err error
+	for {
+		client, err = ethclient.Dial(bs.url)
+		if err != nil {
+			log.Printf("Failure to connect platon %s", err)
+			time.Sleep(100 * time.Millisecond)
+			continue
+		}
+		break
+	}
+	defer client.Close()
+
+	for {
+		number := big.NewInt(100)
+		block, err := client.BlockByNumber(context.Background(), number)
+		if err != nil {
+			time.Sleep(100 * time.Millisecond)
+		}
+		if block != nil && err == nil {
+			log.Println("Platon node mining now")
+			break
+		}
 	}
 	bs.createStaking(client)
 	os.Exit(0)

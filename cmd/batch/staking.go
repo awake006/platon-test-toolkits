@@ -51,7 +51,7 @@ func (bp *StakingBatchProcess) Start() {
 	}
 	fmt.Println("waiting batch")
 	for {
-		if block, err := client.BlockByNumber(context.Background(), big.NewInt(2000)); err == nil && block != nil {
+		if block, err := client.BlockByNumber(context.Background(), big.NewInt(10000)); err == nil && block != nil {
 			break
 		}
 		time.Sleep(time.Second * 1)

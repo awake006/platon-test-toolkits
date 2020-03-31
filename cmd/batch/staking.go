@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/big"
 	"os"
@@ -17,6 +18,7 @@ type BatchStaking struct {
 	stakingConf    *StakingConfig
 	url            string
 	programVersion uint32
+	exit           chan struct{}
 }
 
 type StakingConfig struct {
@@ -65,7 +67,9 @@ func (bs *BatchStaking) Start() {
 			break
 		}
 	}
+	fmt.Println("start create staking")
 	bs.createStaking(client)
+	fmt.Println("end staking")
 	os.Exit(0)
 }
 
@@ -107,6 +111,7 @@ func (bs *BatchStaking) createStaking(client *ethclient.Client) {
 	t := time.Now()
 	timer := time.NewTimer(100 * time.Millisecond)
 	defer timer.Stop()
+	fmt.Printf("transaction hash %s", tx.Hash().String())
 	for {
 		select {
 		case <-timer.C:
@@ -120,7 +125,8 @@ func (bs *BatchStaking) createStaking(client *ethclient.Client) {
 				return
 			}
 			timer.Reset(100 * time.Millisecond)
-		default:
+		case <-bs.exit:
+			fmt.Println("exit")
 			return
 		}
 	}

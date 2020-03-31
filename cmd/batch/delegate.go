@@ -45,17 +45,17 @@ func NewStakingBatchProcess(accounts AccountList, hosts []string, nodeKey string
 }
 
 func (bp *StakingBatchProcess) Start() {
-	client, err := ethclient.Dial(bp.hosts[0])
-	if err != nil {
-		panic(err.Error())
-	}
-	for {
-		if block, err := client.BlockByNumber(context.Background(), big.NewInt(10000)); err == nil && block != nil {
-			break
-		}
-		time.Sleep(time.Second * 1)
-	}
-	time.Sleep(time.Hour * 4)
+	// client, err := ethclient.Dial(bp.hosts[0])
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+	// for {
+	// 	if block, err := client.BlockByNumber(context.Background(), big.NewInt(10000)); err == nil && block != nil {
+	// 		break
+	// 	}
+	// 	time.Sleep(time.Second * 1)
+	// }
+	// time.Sleep(time.Hour * 4)
 	go bp.report()
 
 	for _, host := range bp.hosts {

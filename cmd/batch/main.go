@@ -24,6 +24,7 @@ const (
 )
 
 var ChainId int64 = 100
+var toAccount AddrKeyList
 
 type AddrKey struct {
 	Address string `json:"address"`
@@ -97,7 +98,7 @@ func main() {
 	delegateNodes := flag.String("delegate_nodes", "", "A file store a list of node ID for delegate")
 	programVersionFlag := flag.Int64("program_version", 2562, "create staking program version")
 	privateKeyFlag := flag.String("private_key", "", "create staking address private key")
-
+	toAccountFileFlag := flag.String("to_account", "/data/keys.json", "addr for random transfer")
 	flag.Parse()
 
 	ChainId = *chanIdFlag
@@ -106,6 +107,7 @@ func main() {
 	var bp BatchProcessor
 
 	accounts := parseAccountFile(*accountsFlag, *idxFlag, *count, *intervalMs)
+	toAccount = parseToAccountFile(*toAccountFileFlag)
 
 	switch *cmdFlag {
 	case "transfer":
@@ -224,6 +226,21 @@ func parseAccountFile(accountFile string, idx, count, interval int) AccountList 
 		})
 	}
 	return accounts
+}
+
+func parseToAccountFile(accountFile string) AddrKeyList {
+	var addrKeyList AddrKeyList
+	b, err := ioutil.ReadFile(accountFile)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(b, &addrKeyList)
+	if err != nil {
+		panic(err)
+	}
+
+	return addrKeyList
 }
 
 func parseHosts(nodeCfg string) []string {

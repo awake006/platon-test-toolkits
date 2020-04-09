@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"math/rand"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -13,7 +14,7 @@ import (
 	"github.com/PlatONnetwork/PlatON-Go/ethclient"
 )
 
-const maxSendTxns = 5
+const maxSendTxns = 1
 
 type BatchProcess struct {
 	accounts AccountList
@@ -47,7 +48,7 @@ func NewBatchProcess(accounts AccountList, hosts []string) *BatchProcess {
 		paused:   false,
 	}
 	bp.cond = sync.NewCond(&bp.lock)
-	bp.sendInterval.Store(20 * time.Millisecond)
+	bp.sendInterval.Store(50 * time.Millisecond)
 	return bp
 }
 
@@ -166,8 +167,15 @@ func (bp *BatchProcess) randomAccount(account *Account) *Account {
 	return bp.accounts[r]
 }
 
+func randomToAddrKey() AddrKey {
+	dataLen := len(toAccount)
+	idx := rand.Intn(dataLen)
+	return toAccount[idx]
+}
+
 func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Account) {
-	to := bp.randomAccount(account)
+	// to := bp.randomAccount(account)
+	to := randomToAddrKey()
 	signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	nonce := bp.nonceAt(client, account.address)
 	// if nonce < account.nonce {
@@ -176,7 +184,7 @@ func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Accou
 	for i := 0; i < maxSendTxns; i++ {
 		tx := types.NewTransaction(
 			nonce,
-			to.address,
+			common.HexToAddress(to.Address),
 			big.NewInt(200),
 			21000,
 			big.NewInt(500000000000),

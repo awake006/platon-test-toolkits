@@ -98,7 +98,7 @@ func main() {
 	delegateNodes := flag.String("delegate_nodes", "", "A file store a list of node ID for delegate")
 	programVersionFlag := flag.Int64("program_version", 2562, "create staking program version")
 	privateKeyFlag := flag.String("private_key", "", "create staking address private key")
-	toAccountFileFlag := flag.String("to_account", "/data/keys.json", "addr for random transfer")
+	toAccountFileFlag := flag.String("to_account", "/data/to_keys.json", "addr for random transfer")
 	flag.Parse()
 
 	ChainId = *chanIdFlag

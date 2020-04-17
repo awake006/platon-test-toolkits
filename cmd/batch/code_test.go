@@ -25,7 +25,7 @@ func TestAccount(t *testing.T) {
 			Address: address,
 			Key:     pri,
 		}
-		// fmt.Printf("size:%d", unsafe.Sizeof(addrKey))
+
 		addrKeyList = append(addrKeyList, addrKey)
 	}
 	file, err := os.Create("from_keys.json")

@@ -52,9 +52,9 @@ func TestParpse(t *testing.T) {
 }
 
 func TestVersion(t *testing.T) {
-	VersionMajor := 0  // Major version component of the current release
-	VersionMinor := 12 // Minor version component of the current release
-	VersionPatch := 0  // Patch version component of the current release
+	VersionMajor := 0
+	VersionMinor := 12
+	VersionPatch := 0 // Patch version component of the current release
 	GenesisVersion := uint32(VersionMajor<<16 | VersionMinor<<8 | VersionPatch)
 	fmt.Println(GenesisVersion)
 }

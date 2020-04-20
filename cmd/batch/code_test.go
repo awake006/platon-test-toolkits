@@ -54,7 +54,7 @@ func TestParpse(t *testing.T) {
 func TestVersion(t *testing.T) {
 	VersionMajor := 0
 	VersionMinor := 12
-	VersionPatch := 0 // Patch version component of the current release
+	VersionPatch := 0
 	GenesisVersion := uint32(VersionMajor<<16 | VersionMinor<<8 | VersionPatch)
 	fmt.Println(GenesisVersion)
 }

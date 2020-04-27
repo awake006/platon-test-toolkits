@@ -16,7 +16,7 @@ import (
 
 func TestStakingStub_Create(t *testing.T) {
 	sub := NewStakingStub("a22d2767d847e539ef6cf554b0d2b139b08caeb3d395baca6641a0d922d644f6")
-	stakBuf, err := sub.Create("2b3f963237f4c55d4920dc7ff95a9aa95302a35c676c0c6b9e330994651e565a", "node name")
+	stakBuf, err := sub.Create("2b3f963237f4c55d4920dc7ff95a9aa95302a35c676c0c6b9e330994651e565a", "node name", 1)
 	if err != nil {
 		t.Fatal(err.Error())
 	}

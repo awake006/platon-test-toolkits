@@ -23,7 +23,7 @@ const (
 	SIGN_PASSPHRASE = `88888888`
 )
 
-var ChainId int64 = 100
+var ChainId int64 = 101
 var toAccount AddrKeyList
 
 type AddrKey struct {
@@ -98,7 +98,7 @@ func main() {
 	delegateNodes := flag.String("delegate_nodes", "", "A file store a list of node ID for delegate")
 	programVersionFlag := flag.Int64("program_version", 2562, "create staking program version")
 	privateKeyFlag := flag.String("private_key", "", "create staking address private key")
-	toAccountFileFlag := flag.String("to_account", "/data/to_keys.json", "addr for random transfer")
+	// toAccountFileFlag := flag.String("to_account", "/data/to_keys.json", "addr for random transfer")
 	flag.Parse()
 
 	ChainId = *chanIdFlag
@@ -107,7 +107,7 @@ func main() {
 	var bp BatchProcessor
 
 	accounts := parseAccountFile(*accountsFlag, *idxFlag, *count, *intervalMs)
-	toAccount = parseToAccountFile(*toAccountFileFlag)
+	// toAccount = parseToAccountFile(*toAccountFileFlag)
 
 	switch *cmdFlag {
 	case "transfer":
@@ -217,8 +217,12 @@ func parseAccountFile(accountFile string, idx, count, interval int) AccountList 
 			fmt.Printf("error private key: %s, err: %v\n", ak.Key, pk)
 			continue
 		}
+		bech32Addr, err := common.Bech32ToAddress(ak.Address)
+		if err != nil {
+			panic(err.Error())
+		}
 		accounts = append(accounts, &Account{
-			address:    common.HexToAddress(ak.Address),
+			address:    bech32Addr,
 			privateKey: pk,
 			lastSent:   time.Now(),
 			interval:   time.Duration(interval) * time.Millisecond,

@@ -17,7 +17,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
 COPY --from=builder /go/src/github.com/awake006/platon-test-toolkits/cmd/batch/batch /usr/local/bin/
 COPY --from=builder /go/src/github.com/awake006/platon-test-toolkits/entrypoint.sh /usr/local/bin/
 ADD ./cmd/batch/all_addr_and_private_keys.json /data/
-ADD ./cmd/batch/to_keys.json /data/
+#ADD ./cmd/batch/to_keys.json /data/
 # ADD ./cmd/gen_accounts/1m_accounts.json /data/
 
 ENV URL="ws://127.0.0.1:8806"

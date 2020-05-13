@@ -97,3 +97,7 @@ func TestSendTransaction(t *testing.T) {
 		nonce++
 	}
 }
+
+func TestInit(t *testing.T) {
+	fmt.Println(contractAddr.String())
+}

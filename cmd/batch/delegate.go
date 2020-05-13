@@ -14,7 +14,15 @@ import (
 	"github.com/awake006/platon-test-toolkits/util"
 )
 
-var contractAddr = common.HexToAddress("0x1000000000000000000000000000000000000002")
+// var contractAddr = common.Bech32ToAddress("lax1zqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzlh5ge3")
+var (
+	contractAddr common.Address
+	err          error
+)
+
+func init() {
+	contractAddr, err = common.Bech32ToAddress("lax1zqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzlh5ge3")
+}
 
 type StakingBatchProcess struct {
 	accounts AccountList

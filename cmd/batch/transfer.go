@@ -14,7 +14,7 @@ import (
 	"github.com/PlatONnetwork/PlatON-Go/ethclient"
 )
 
-const maxSendTxns = 1
+const maxSendTxns = 5
 
 type BatchProcess struct {
 	accounts AccountList
@@ -177,8 +177,8 @@ func randomToAddrKey() AddrKey {
 }
 
 func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Account) {
-	// to := bp.randomAccount(account)
-	to := randomToAddrKey()
+	to := bp.randomAccount(account)
+	// to := randomToAddrKey()
 	// signer := types.NewEIP155Signer(big.NewInt(ChainId))
 	nonce := bp.nonceAt(client, account.address)
 	// if nonce < account.nonce {
@@ -187,7 +187,7 @@ func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Accou
 	for i := 0; i < maxSendTxns; i++ {
 		tx := types.NewTransaction(
 			nonce,
-			common.HexToAddress(to.Address),
+			to.address,
 			big.NewInt(200),
 			21000,
 			big.NewInt(500000000000),

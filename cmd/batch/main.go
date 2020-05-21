@@ -78,13 +78,13 @@ type BatchProcessor interface {
 func main() {
 	log.SetFlags(0)
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	cmdFlag := flag.String("cmd", "transfer", "Batch send transaction type(transfer,staking,side_transfer,side_delegate,side_mix,side_random,rally3)")
-	accountsFlag := flag.String("accounts", "", "A json file store account's private key and address")
+	cmdFlag := flag.String("cmd", "side_transfer", "Batch send transaction type(transfer,staking,side_transfer,side_delegate,side_mix,side_random,rally3)")
+	accountsFlag := flag.String("accounts", "./node.json", "A json file store account's private key and address")
 	nodeCfg := flag.String("node_cfg", "", "Node list config file")
-	intervalMs := flag.Int("interval_ms", 100, "Send transaction interval")
-	count := flag.Int("count", 1, "How many accounts to send transactions")
+	intervalMs := flag.Int("interval_ms", 10000, "Send transaction interval")
+	count := flag.Int("count", 100, "How many accounts to send transactions")
 	idxFlag := flag.Int("idx", 0, "Index of accounts")
-	urlFlag := flag.String("url", "ws://127.0.0.1:8806", "platon node's RPC endpoint")
+	urlFlag := flag.String("url", "ws://127.0.0.1:6790", "platon node's RPC endpoint")
 	nodeKeyFlag := flag.String("nodekey", "", "The platon node's private key, for create staking")
 	blsKeyFlag := flag.String("blskey", "", "The platon node's bls public key, for create staking")
 	nodeNameFlag := flag.String("nm", "", "The platon node's name")
@@ -92,13 +92,13 @@ func main() {
 	stakingFlag := flag.Bool("staking", false, "Should create staking")
 	delegateFlag := flag.Bool("delegate", false, "Should delegate")
 	randCountFlag := flag.Int("rand_count", 10000, "The maximum generate random addresses count")
-	chanIdFlag := flag.Int64("chain_id", 101, "The identity of chain")
+	chanIdFlag := flag.Int64("chain_id", 102, "The identity of chain")
 	randAccountsFlag := flag.String("rand_accounts", "", "A file store account's address")
 	randIdxFlag := flag.Int("rand_idx", 0, "Index of random accounts")
 	delegateNodes := flag.String("delegate_nodes", "", "A file store a list of node ID for delegate")
 	programVersionFlag := flag.Int64("program_version", 2562, "create staking program version")
 	privateKeyFlag := flag.String("private_key", "", "create staking address private key")
-	toAccountFileFlag := flag.String("to_account", "/data/to_keys.json", "addr for random transfer")
+	// toAccountFileFlag := flag.String("to_account", "/data/to_keys.json", "addr for random transfer")
 	flag.Parse()
 
 	ChainId = *chanIdFlag
@@ -107,7 +107,7 @@ func main() {
 	var bp BatchProcessor
 
 	accounts := parseAccountFile(*accountsFlag, *idxFlag, *count, *intervalMs)
-	toAccount = parseToAccountFile(*toAccountFileFlag)
+	// toAccount = parseToAccountFile(*toAccountFileFlag)
 
 	switch *cmdFlag {
 	case "transfer":

@@ -13,7 +13,7 @@ import (
 
 func TestAccount(t *testing.T) {
 	var addrKeyList AddrKeyList
-	for i := 0; i <= 15000; i++ {
+	for i := 0; i <= 1000000; i++ {
 		privateKey, err := crypto.GenerateKey()
 		if err != nil {
 			t.Fatal(err.Error())
@@ -44,11 +44,43 @@ func TestAccount(t *testing.T) {
 	}
 }
 
-func TestParpse(t *testing.T) {
-	data := parseToAccountFile("./to_keys.json")
-	fmt.Println(len(data))
-	fmt.Println(data[len(data)-1])
-	time.Sleep(time.Second * 20)
+func TestNewBatchTransfer(t *testing.T) {
+	fmt.Println("parse from address")
+	accounts := parseAccountFile("./from.json", 0, 5000, 100000)
+	fmt.Println("parse to address")
+	toAccountList := parseToAccountFile("./all_addr_and_private_keys.json")
+	urls := []string{
+		"ws://10.1.1.25:6601", "ws://10.1.1.26:6601", "ws://10.1.1.27:6601", "ws://10.1.1.28:6601",
+		"ws://10.1.1.29:6601", "ws://10.1.1.30:6601", "ws://10.1.1.31:6601", "ws://10.1.1.32:6601",
+		"ws://10.1.1.33:6601", "ws://10.1.1.34:6601", "ws://10.1.1.35:6601", "ws://10.1.1.36:6601",
+		"ws://10.1.1.37:6601", "ws://10.1.1.38:6601", "ws://10.1.1.39:6601", "ws://10.1.1.40:6601",
+		"ws://10.1.1.41:6601", "ws://10.1.1.42:6601", "ws://10.1.1.43:6601", "ws://10.1.1.44:6601",
+		"ws://10.1.1.45:6601", "ws://10.1.1.46:6601", "ws://10.1.1.47:6601", "ws://10.1.1.48:6601",
+		"ws://10.1.1.49:6601",
+	}
+	batch := NewBatchTransfer(accounts, urls, 100, 100)
+	fmt.Println("send address to toCh")
+
+	done := make(chan struct{}, 1)
+	over := false
+	go func() {
+		for _, acc := range toAccountList {
+			batch.toAddrCh <- common.HexToAddress(acc.Address)
+		}
+		over = true
+	}()
+	fmt.Println("start")
+	batch.Start()
+	go func() {
+		for {
+			if over && len(batch.toAddrCh) == 0 {
+				done <- struct{}{}
+			}
+			<-time.After(time.Second)
+		}
+	}()
+	<-done
+	batch.Stop()
 }
 
 func TestVersion(t *testing.T) {

@@ -157,6 +157,7 @@ func (bp *BatchDifProcess) perform(host string) {
 				} else {
 					count = 0
 					st = 0
+					bp.sendCh <- act
 				}
 			}
 		case task := <-bp.waitCh:

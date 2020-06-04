@@ -4,24 +4,24 @@ import (
 	"context"
 	"fmt"
 	"math/big"
-	"math/rand"
 	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/PlatONnetwork/PlatON-Go/common"
 	"github.com/PlatONnetwork/PlatON-Go/core/types"
+	"github.com/PlatONnetwork/PlatON-Go/crypto"
 	"github.com/PlatONnetwork/PlatON-Go/ethclient"
 )
 
-type BatchProcess struct {
+type BatchProportionProcess struct {
 	accounts AccountList
 	hosts    []string
 
-	sendCh chan *Account
-	waitCh chan *ReceiptTask
-
-	signer types.EIP155Signer
+	sendCh   chan *Account
+	waitCh   chan *ReceiptTask
+	acceptCh chan common.Address
+	signer   types.EIP155Signer
 
 	exit chan struct{}
 
@@ -34,29 +34,34 @@ type BatchProcess struct {
 	lock        sync.Mutex
 	cond        *sync.Cond
 	maxSendTxns int
+	proportion  int
 
 	BatchProcessor
 }
 
-func NewBatchProcess(accounts AccountList, hosts []string, sendTxs int) *BatchProcess {
-
-	bp := &BatchProcess{
+func NewBatchProportionProcess(accounts AccountList, hosts []string, maxSendTxns, proportion int) *BatchProportionProcess {
+	bp := &BatchProportionProcess{
 		accounts:    accounts,
 		hosts:       hosts,
-		sendCh:      make(chan *Account, len(accounts)),
-		waitCh:      make(chan *ReceiptTask, 1),
+		sendCh:      make(chan *Account, len(accounts)*2),
+		acceptCh:    make(chan common.Address, len(accounts)*2),
+		waitCh:      make(chan *ReceiptTask, len(accounts)*2),
 		signer:      types.NewEIP155Signer(big.NewInt(ChainId)),
 		exit:        make(chan struct{}),
 		sents:       0,
 		paused:      false,
-		maxSendTxns: sendTxs,
+		maxSendTxns: maxSendTxns,
+		proportion:  proportion,
 	}
 	bp.cond = sync.NewCond(&bp.lock)
 	bp.sendInterval.Store(50 * time.Millisecond)
 	return bp
 }
 
-func (bp *BatchProcess) Start() {
+func (bp *BatchProportionProcess) Start() {
+	fmt.Println("Start generate accept account")
+	bp.GenAcceptAccount()
+	fmt.Println("Generate accept account ok")
 	go bp.report()
 
 	for _, host := range bp.hosts {
@@ -70,17 +75,17 @@ func (bp *BatchProcess) Start() {
 	fmt.Println("start success")
 }
 
-func (bp *BatchProcess) Stop() {
+func (bp *BatchProportionProcess) Stop() {
 	close(bp.exit)
 }
 
-func (bp *BatchProcess) Pause() {
+func (bp *BatchProportionProcess) Pause() {
 	bp.cond.L.Lock()
 	defer bp.cond.L.Unlock()
 	bp.paused = true
 }
 
-func (bp *BatchProcess) Resume() {
+func (bp *BatchProportionProcess) Resume() {
 	bp.cond.L.Lock()
 	defer bp.cond.L.Unlock()
 	if !bp.paused {
@@ -90,11 +95,22 @@ func (bp *BatchProcess) Resume() {
 	bp.cond.Signal()
 }
 
-func (bp *BatchProcess) SetSendInterval(d time.Duration) {
+func (bp *BatchProportionProcess) GenAcceptAccount() {
+	for i := 0; i < len(bp.accounts); i++ {
+		pk, err := crypto.GenerateKey()
+		if err != nil {
+			panic(err.Error())
+		}
+		address := crypto.PubkeyToAddress(pk.PublicKey)
+		bp.acceptCh <- address
+	}
+}
+
+func (bp *BatchProportionProcess) SetSendInterval(d time.Duration) {
 	bp.sendInterval.Store(d)
 }
 
-func (bp *BatchProcess) report() {
+func (bp *BatchProportionProcess) report() {
 	timer := time.NewTimer(time.Second)
 	for {
 		select {
@@ -109,16 +125,13 @@ func (bp *BatchProcess) report() {
 	}
 }
 
-func (bp *BatchProcess) perform(host string) {
+func (bp *BatchProportionProcess) perform(host string) {
 	client, err := ethclient.Dial(host)
 	if err != nil {
 		panic(err)
 	}
 	defer client.Close()
-
-	sentCh := make(chan *Account, len(bp.accounts))
-	receiptCh := make(chan *ReceiptTask, len(bp.accounts))
-
+	count := 0
 	for {
 		bp.cond.L.Lock()
 		if bp.paused {
@@ -128,14 +141,15 @@ func (bp *BatchProcess) perform(host string) {
 
 		select {
 		case act := <-bp.sendCh:
-			if act.sendCh == nil {
-				act.sendCh = sentCh
-				act.receiptCh = receiptCh
+			if count < bp.proportion {
+				bp.sendTransaction(client, act, 1)
+				count++
+			} else {
+				count = 0
+				bp.sendTransaction(client, act, bp.maxSendTxns)
 			}
-			bp.sendTransaction(client, act)
-		case act := <-sentCh:
-			bp.sendTransaction(client, act)
-		case task := <-receiptCh:
+
+		case task := <-bp.waitCh:
 			bp.getTransactionReceipt(client, task)
 		case <-bp.exit:
 			return
@@ -143,7 +157,7 @@ func (bp *BatchProcess) perform(host string) {
 	}
 }
 
-func (bp *BatchProcess) nonceAt(client *ethclient.Client, addr common.Address) uint64 {
+func (bp *BatchProportionProcess) nonceAt(client *ethclient.Client, addr common.Address) uint64 {
 	var blockNumber *big.Int
 	nonce, err := client.NonceAt(context.Background(), addr, blockNumber)
 	if err != nil {
@@ -151,44 +165,15 @@ func (bp *BatchProcess) nonceAt(client *ethclient.Client, addr common.Address) u
 		return 0
 	}
 	return nonce
-
 }
 
-func (bp *BatchProcess) randomAccount(account *Account) *Account {
-	idx := 0
-	for i, act := range bp.accounts {
-		if act.address == account.address {
-			idx = i
-			break
-		}
-	}
-
-	r := idx + 1
-	if r == len(bp.accounts) {
-		r = idx - 1
-	}
-
-	return bp.accounts[r]
-}
-
-func randomToAddrKey() AddrKey {
-	dataLen := len(toAccount)
-	idx := rand.Intn(dataLen)
-	return toAccount[idx]
-}
-
-func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Account) {
-	to := bp.randomAccount(account)
-	// to := randomToAddrKey()
-	// signer := types.NewEIP155Signer(big.NewInt(ChainId))
+func (bp *BatchProportionProcess) sendTransaction(client *ethclient.Client, account *Account, sendTxs int) {
+	to := <-bp.acceptCh
 	nonce := bp.nonceAt(client, account.address)
-	// if nonce < account.nonce {
-	//	nonce = account.nonce
-	// }
-	for i := 0; i < bp.maxSendTxns; i++ {
+	for i := 0; i < sendTxs; i++ {
 		tx := types.NewTransaction(
 			nonce,
-			to.address,
+			to,
 			big.NewInt(200),
 			21000,
 			big.NewInt(500000000000),
@@ -197,6 +182,7 @@ func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Accou
 		if err != nil {
 			fmt.Printf("sign tx error: %v\n", err)
 			bp.sendCh <- account
+			bp.acceptCh <- to
 			return
 		}
 
@@ -206,7 +192,8 @@ func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Accou
 			fmt.Printf("send transaction error: %v\n", err)
 			go func() {
 				<-time.After(bp.sendInterval.Load().(time.Duration))
-				account.sendCh <- account
+				bp.sendCh <- account
+				bp.acceptCh <- to
 			}()
 			return
 		}
@@ -215,32 +202,35 @@ func (bp *BatchProcess) sendTransaction(client *ethclient.Client, account *Accou
 
 		nonce += 1
 
-		if i < bp.maxSendTxns-1 {
+		if i < sendTxs-1 {
 			continue
 		}
 
 		go func() {
 			<-time.After(2 * time.Second)
-			account.receiptCh <- &ReceiptTask{
+			bp.waitCh <- &ReceiptTask{
 				account: account,
 				hash:    signedTx.Hash(),
+				to:      to,
 			}
 		}()
 	}
 }
 
-func (bp *BatchProcess) getTransactionReceipt(client *ethclient.Client, task *ReceiptTask) {
+func (bp *BatchProportionProcess) getTransactionReceipt(client *ethclient.Client, task *ReceiptTask) {
+	// fmt.Println("get receipts:", task.to.String())
 	_, err := client.TransactionReceipt(context.Background(), task.hash)
 	if err != nil {
 		if time.Since(task.account.lastSent) >= task.account.interval {
 			fmt.Printf("get receipt timeout, address:%s, hash: %s, sendTime: %v, now: %v\n",
 				task.account.address.String(), task.hash.String(), task.account.lastSent, time.Now())
-			task.account.sendCh <- task.account
+			bp.sendCh <- task.account
+			bp.acceptCh <- task.to
 			return
 		}
 		go func() {
 			<-time.After(300 * time.Millisecond)
-			task.account.receiptCh <- task
+			bp.waitCh <- task
 		}()
 		return
 	}
@@ -249,6 +239,7 @@ func (bp *BatchProcess) getTransactionReceipt(client *ethclient.Client, task *Re
 
 	go func() {
 		<-time.After(bp.sendInterval.Load().(time.Duration))
-		task.account.sendCh <- task.account
+		bp.sendCh <- task.account
+		bp.acceptCh <- task.to
 	}()
 }

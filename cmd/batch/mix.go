@@ -35,24 +35,24 @@ type BatchMixProcess struct {
 
 	BatchProcessor
 
-	stub     *util.StakingStub
-	delegate bool
+	stub        *util.StakingStub
+	delegate    bool
+	maxSendTxns int
 }
 
-const maxSendTransferTxns = 3
-
-func NewBatchMixProcess(accounts AccountList, hosts []string, nodeKey string, delegate bool) BatchProcessor {
+func NewBatchMixProcess(accounts AccountList, hosts []string, nodeKey string, delegate bool, maxSendTxns int) BatchProcessor {
 	bp := &BatchMixProcess{
-		accounts: accounts,
-		hosts:    hosts,
-		sendCh:   make(chan *Account, 1000),
-		waitCh:   make(chan *ReceiptTask, 1000),
-		exit:     make(chan struct{}),
-		sents:    0,
-		receipts: 0,
-		paused:   false,
-		stub:     util.NewStakingStub(nodeKey),
-		delegate: delegate,
+		accounts:    accounts,
+		hosts:       hosts,
+		sendCh:      make(chan *Account, 1000),
+		waitCh:      make(chan *ReceiptTask, 1000),
+		exit:        make(chan struct{}),
+		sents:       0,
+		receipts:    0,
+		paused:      false,
+		stub:        util.NewStakingStub(nodeKey),
+		delegate:    delegate,
+		maxSendTxns: maxSendTxns,
 	}
 	bp.cond = sync.NewCond(&bp.lock)
 	bp.sendInterval.Store(50 * time.Millisecond)
@@ -188,7 +188,7 @@ func (bp *BatchMixProcess) sendTransaction(client *ethclient.Client, account *Ac
 	// if nonce < account.nonce {
 	//	nonce = account.nonce
 	// }
-	for i := 0; i < maxSendTransferTxns; i++ {
+	for i := 0; i < bp.maxSendTxns; i++ {
 		tx := types.NewTransaction(
 			nonce,
 			to.address,
@@ -218,7 +218,7 @@ func (bp *BatchMixProcess) sendTransaction(client *ethclient.Client, account *Ac
 
 		nonce += 1
 
-		if i < maxSendTransferTxns-1 {
+		if i < bp.maxSendTxns-1 {
 			continue
 		}
 
@@ -264,6 +264,7 @@ func (bp *BatchMixProcess) sendDelegate(client *ethclient.Client, account *Accou
 		}()
 		return
 	}
+	fmt.Println("delegate success:", tx.Hash().String())
 	account.nonce = nonce
 	atomic.AddInt32(&bp.sents, 1)
 	go func() {

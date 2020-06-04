@@ -17,13 +17,19 @@ import (
 )
 
 var (
-	accounts           = parseAccountFile(`all_addr_and_private_keys.json`, 0, 20, 500)
+	accounts           = parseAccountFile(`all_addr_and_private_keys.json`, 0, 2000, 10000)
 	hasMoneyAddress    = "lax196278ns22j23awdfj9f2d4vz0pedld8au6xelj"
 	hasMoneyPrivateKey = "a689f0879f53710e9e0c1025af410a530d6381eebb5916773195326e123b822b"
+	urls               = []string{
+		"ws://192.168.9.201:8808", "ws://192.168.9.201:8809",
+		"ws://192.168.9.202:8808", "ws://192.168.9.202:8809",
+		"ws://192.168.9.203:8808", "ws://192.168.9.203:8809",
+		"ws://192.168.9.204:8808", "ws://192.168.9.204:8809",
+	}
 )
 
 func TestClient(t *testing.T) {
-	client, err := ethclient.Dial("http://192.168.9.201:6789")
+	client, err := ethclient.Dial("ws://192.168.9.201:8809")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -35,19 +41,17 @@ func TestClient(t *testing.T) {
 	if err != nil {
 		panic(err.Error())
 	}
+	number := big.NewInt(100)
+	block, err := client.BlockByNumber(context.Background(), number)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(block.NumberU64())
 	fmt.Println(nonce)
 }
 
-func TestParseAccountFile(t *testing.T) {
-	bp := NewSideBatch(
-		NewBatchProcess(accounts, []string{"ws://192.168.9.201:6790"}),
-		accounts[0],
-		"ws://192.168.9.201:6790",
-		"a464a310005f6e4323b056c4ec4fe665f6799359bcb3cfbc0aaaa82a0771e166",
-		"8b4757d841895db28c0669102c321a45ce698ec5c52d898e694166017b2a750b",
-		"test",
-		false,
-		false)
+func TestBatchProcess_Start(t *testing.T) {
+	bp := NewBatchProcess(accounts, urls, 5)
 	bp.Start()
 	sigs := make(chan os.Signal, 1)
 	done := make(chan struct{}, 1)
@@ -58,6 +62,23 @@ func TestParseAccountFile(t *testing.T) {
 		done <- struct{}{}
 	}()
 	<-done
+	bp.Stop()
+}
+
+func TestNewBatchMixProcess_Start(t *testing.T) {
+	nodekey := "d979cc4cb878676a134370d040766c74df1950e84996590cd0d6ea6b468af65d"
+	bp := NewBatchMixProcess(accounts, urls, nodekey, true, 3)
+	bp.Start()
+	sigs := make(chan os.Signal, 1)
+	done := make(chan struct{}, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-sigs
+		done <- struct{}{}
+	}()
+	<-done
+	bp.Stop()
 }
 
 func TestSendTransaction(t *testing.T) {
@@ -96,6 +117,51 @@ func TestSendTransaction(t *testing.T) {
 		}
 		nonce++
 	}
+}
+
+func TestBatchParallelProcess_Start(t *testing.T) {
+	bp := NewBatchParallelProcess(accounts, urls, 2, 7)
+	bp.Start()
+	sigs := make(chan os.Signal, 1)
+	done := make(chan struct{}, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-sigs
+		done <- struct{}{}
+	}()
+	<-done
+	bp.Stop()
+}
+
+func TestBatchProportionProcess_Start(t *testing.T) {
+	bp := NewBatchProportionProcess(accounts, urls, 3, 7)
+	bp.Start()
+	sigs := make(chan os.Signal, 1)
+	done := make(chan struct{}, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-sigs
+		done <- struct{}{}
+	}()
+	<-done
+	bp.Stop()
+}
+
+func TestBatchDifProcess_Start(t *testing.T) {
+	bp := NewBatchDifProcess(accounts, urls, 3, 7)
+	bp.Start()
+	sigs := make(chan os.Signal, 1)
+	done := make(chan struct{}, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-sigs
+		done <- struct{}{}
+	}()
+	<-done
+	bp.Stop()
 }
 
 func TestInit(t *testing.T) {

@@ -65,6 +65,7 @@ type ReceiptTask struct {
 	lastGot time.Time
 
 	sendCh chan *Account
+	to     common.Address
 }
 
 type BatchProcessor interface {
@@ -81,7 +82,7 @@ func main() {
 	cmdFlag := flag.String("cmd", "transfer", "Batch send transaction type(transfer,staking,side_transfer,side_delegate,side_mix,side_random,rally3)")
 	accountsFlag := flag.String("accounts", "", "A json file store account's private key and address")
 	nodeCfg := flag.String("node_cfg", "", "Node list config file")
-	intervalMs := flag.Int("interval_ms", 100, "Send transaction interval")
+	intervalMs := flag.Int("interval_ms", 10000, "Send transaction interval")
 	count := flag.Int("count", 1, "How many accounts to send transactions")
 	idxFlag := flag.Int("idx", 0, "Index of accounts")
 	urlFlag := flag.String("url", "ws://127.0.0.1:8806", "platon node's RPC endpoint")
@@ -98,6 +99,8 @@ func main() {
 	delegateNodes := flag.String("delegate_nodes", "", "A file store a list of node ID for delegate")
 	programVersionFlag := flag.Int64("program_version", 2562, "create staking program version")
 	privateKeyFlag := flag.String("private_key", "", "create staking address private key")
+	sendTxsFlag := flag.Int("send_txs", 3, "one address continuous send tx number")
+	proportionFlag := flag.Int("proportion", 0, "Related transaction ratio")
 	// toAccountFileFlag := flag.String("to_account", "/data/to_keys.json", "addr for random transfer")
 	flag.Parse()
 
@@ -112,13 +115,13 @@ func main() {
 	switch *cmdFlag {
 	case "transfer":
 		hosts := parseHosts(*nodeCfg)
-		bp = NewBatchProcess(accounts, hosts)
+		bp = NewBatchProcess(accounts, hosts, *sendTxsFlag)
 	case "staking":
 		hosts := parseHosts(*nodeCfg)
 		bp = NewStakingBatchProcess(accounts, hosts, *nodeKeyFlag)
 	case "side_transfer":
 		bp = NewSideBatch(
-			NewBatchProcess(accounts, []string{*urlFlag}),
+			NewBatchProcess(accounts, []string{*urlFlag}, *sendTxsFlag),
 			accounts[0],
 			*urlFlag,
 			*nodeKeyFlag,
@@ -138,7 +141,7 @@ func main() {
 			*stakingFlag)
 	case "side_mix":
 		bp = NewSideBatch(
-			NewBatchMixProcess(accounts, []string{*urlFlag}, *nodeKeyFlag, *delegateFlag),
+			NewBatchMixProcess(accounts, []string{*urlFlag}, *nodeKeyFlag, *delegateFlag, *sendTxsFlag),
 			accounts[0],
 			*urlFlag,
 			*nodeKeyFlag,
@@ -166,6 +169,16 @@ func main() {
 				*randCountFlag,
 				*randAccountsFlag,
 				*randIdxFlag),
+			accounts[0],
+			*urlFlag,
+			*nodeKeyFlag,
+			*blsKeyFlag,
+			*nodeNameFlag,
+			*onlyConsensusFlag,
+			*stakingFlag)
+	case "proportion_transfer":
+		bp = NewSideBatch(
+			NewBatchProportionProcess(accounts, []string{*urlFlag}, *sendTxsFlag, *proportionFlag),
 			accounts[0],
 			*urlFlag,
 			*nodeKeyFlag,

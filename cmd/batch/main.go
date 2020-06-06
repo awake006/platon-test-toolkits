@@ -113,6 +113,8 @@ func main() {
 	// toAccount = parseToAccountFile(*toAccountFileFlag)
 
 	switch *cmdFlag {
+	case "batch_transfer":
+		bp = NewBatchTransfer(*privateKeyFlag, *urlFlag, accounts)
 	case "transfer":
 		hosts := parseHosts(*nodeCfg)
 		bp = NewBatchProcess(accounts, hosts, *sendTxsFlag)
@@ -179,6 +181,26 @@ func main() {
 	case "proportion_transfer":
 		bp = NewSideBatch(
 			NewBatchProportionProcess(accounts, []string{*urlFlag}, *sendTxsFlag, *proportionFlag),
+			accounts[0],
+			*urlFlag,
+			*nodeKeyFlag,
+			*blsKeyFlag,
+			*nodeNameFlag,
+			*onlyConsensusFlag,
+			*stakingFlag)
+	case "same_from_transfer":
+		bp = NewSideBatch(
+			NewBatchSameFromProcess(accounts, []string{*urlFlag}, *sendTxsFlag, *proportionFlag),
+			accounts[0],
+			*urlFlag,
+			*nodeKeyFlag,
+			*blsKeyFlag,
+			*nodeNameFlag,
+			*onlyConsensusFlag,
+			*stakingFlag)
+	case "same_to_transfer":
+		bp = NewSideBatch(
+			NewBatchSameToProcess(accounts, []string{*urlFlag}, *sendTxsFlag, *proportionFlag),
 			accounts[0],
 			*urlFlag,
 			*nodeKeyFlag,

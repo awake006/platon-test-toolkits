@@ -201,7 +201,7 @@ func (bp *BatchProportionProcess) sendTransaction(client *ethclient.Client, acco
 		atomic.AddInt32(&bp.sents, 1)
 
 		nonce += 1
-
+		// fmt.Printf("from:%s,to:%s\n",account.address.String(), to.String())
 		if i < sendTxs-1 {
 			continue
 		}

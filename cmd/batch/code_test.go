@@ -13,7 +13,7 @@ import (
 
 func TestAccount(t *testing.T) {
 	var addrKeyList AddrKeyList
-	for i := 0; i <= 15000; i++ {
+	for i := 0; i <= 1000000; i++ {
 		privateKey, err := crypto.GenerateKey()
 		if err != nil {
 			t.Fatal(err.Error())
@@ -28,7 +28,7 @@ func TestAccount(t *testing.T) {
 
 		addrKeyList = append(addrKeyList, addrKey)
 	}
-	file, err := os.Create("from_keys.json")
+	file, err := os.Create("all_addr_and_private_keys.json")
 	if err != nil {
 		t.Fatal(err.Error())
 	}

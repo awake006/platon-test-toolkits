@@ -14,7 +14,7 @@ import (
 	"github.com/PlatONnetwork/PlatON-Go/ethclient"
 )
 
-type BatchParallelProcess struct {
+type BatchSameFromProcess struct {
 	accounts AccountList
 	hosts    []string
 
@@ -39,8 +39,8 @@ type BatchParallelProcess struct {
 	BatchProcessor
 }
 
-func NewBatchParallelProcess(accounts AccountList, hosts []string, maxSendTxns, proportion int) *BatchParallelProcess {
-	bp := &BatchParallelProcess{
+func NewBatchSameFromProcess(accounts AccountList, hosts []string, maxSendTxns, proportion int) *BatchSameFromProcess {
+	bp := &BatchSameFromProcess{
 		accounts:    accounts,
 		hosts:       hosts,
 		sendCh:      make(chan *Account, len(accounts)),
@@ -58,7 +58,7 @@ func NewBatchParallelProcess(accounts AccountList, hosts []string, maxSendTxns, 
 	return bp
 }
 
-func (bp *BatchParallelProcess) Start() {
+func (bp *BatchSameFromProcess) Start() {
 	fmt.Println("Start generate accept account")
 	bp.GenAcceptAccount()
 	fmt.Println("Generate accept account ok")
@@ -75,17 +75,17 @@ func (bp *BatchParallelProcess) Start() {
 	fmt.Println("start success")
 }
 
-func (bp *BatchParallelProcess) Stop() {
+func (bp *BatchSameFromProcess) Stop() {
 	close(bp.exit)
 }
 
-func (bp *BatchParallelProcess) Pause() {
+func (bp *BatchSameFromProcess) Pause() {
 	bp.cond.L.Lock()
 	defer bp.cond.L.Unlock()
 	bp.paused = true
 }
 
-func (bp *BatchParallelProcess) Resume() {
+func (bp *BatchSameFromProcess) Resume() {
 	bp.cond.L.Lock()
 	defer bp.cond.L.Unlock()
 	if !bp.paused {
@@ -95,7 +95,7 @@ func (bp *BatchParallelProcess) Resume() {
 	bp.cond.Signal()
 }
 
-func (bp *BatchParallelProcess) GenAcceptAccount() {
+func (bp *BatchSameFromProcess) GenAcceptAccount() {
 	for i := 0; i < cap(bp.acceptCh); i++ {
 		pk, err := crypto.GenerateKey()
 		if err != nil {
@@ -106,11 +106,11 @@ func (bp *BatchParallelProcess) GenAcceptAccount() {
 	}
 }
 
-func (bp *BatchParallelProcess) SetSendInterval(d time.Duration) {
+func (bp *BatchSameFromProcess) SetSendInterval(d time.Duration) {
 	bp.sendInterval.Store(d)
 }
 
-func (bp *BatchParallelProcess) report() {
+func (bp *BatchSameFromProcess) report() {
 	timer := time.NewTimer(time.Second)
 	for {
 		select {
@@ -126,7 +126,7 @@ func (bp *BatchParallelProcess) report() {
 	}
 }
 
-func (bp *BatchParallelProcess) perform(host string) {
+func (bp *BatchSameFromProcess) perform(host string) {
 	client, err := ethclient.Dial(host)
 	if err != nil {
 		panic(err)
@@ -160,7 +160,7 @@ func (bp *BatchParallelProcess) perform(host string) {
 	}
 }
 
-func (bp *BatchParallelProcess) sendSameFromAddrTransaction(client *ethclient.Client, act *Account, nonce uint64) error {
+func (bp *BatchSameFromProcess) sendSameFromAddrTransaction(client *ethclient.Client, act *Account, nonce uint64) error {
 	for i := 0; i < bp.maxSendTxns; i++ {
 		to := <-bp.acceptCh
 		hash, err := bp.sendTransaction(client, act, to, nonce)
@@ -192,7 +192,7 @@ func (bp *BatchParallelProcess) sendSameFromAddrTransaction(client *ethclient.Cl
 
 }
 
-func (bp *BatchParallelProcess) sendDifFromAddrTransaction(client *ethclient.Client, act *Account, nonce uint64) error {
+func (bp *BatchSameFromProcess) sendDifFromAddrTransaction(client *ethclient.Client, act *Account, nonce uint64) error {
 	to := <-bp.acceptCh
 	hash, err := bp.sendTransaction(client, act, to, nonce)
 
@@ -215,7 +215,7 @@ func (bp *BatchParallelProcess) sendDifFromAddrTransaction(client *ethclient.Cli
 	return nil
 }
 
-func (bp *BatchParallelProcess) nonceAt(client *ethclient.Client, addr common.Address) uint64 {
+func (bp *BatchSameFromProcess) nonceAt(client *ethclient.Client, addr common.Address) uint64 {
 	var blockNumber *big.Int
 	nonce, err := client.NonceAt(context.Background(), addr, blockNumber)
 	if err != nil {
@@ -225,7 +225,7 @@ func (bp *BatchParallelProcess) nonceAt(client *ethclient.Client, addr common.Ad
 	return nonce
 }
 
-func (bp *BatchParallelProcess) sendTransaction(client *ethclient.Client, account *Account, to common.Address, nonce uint64) (common.Hash, error) {
+func (bp *BatchSameFromProcess) sendTransaction(client *ethclient.Client, account *Account, to common.Address, nonce uint64) (common.Hash, error) {
 	tx := types.NewTransaction(
 		nonce,
 		to,
@@ -233,6 +233,7 @@ func (bp *BatchParallelProcess) sendTransaction(client *ethclient.Client, accoun
 		21000,
 		big.NewInt(500000000000),
 		nil)
+
 	signedTx, err := types.SignTx(tx, bp.signer, account.privateKey)
 	if err != nil {
 		return common.Hash{}, err
@@ -244,11 +245,11 @@ func (bp *BatchParallelProcess) sendTransaction(client *ethclient.Client, accoun
 		return common.Hash{}, err
 	}
 	atomic.AddInt32(&bp.sents, 1)
-
+	// fmt.Printf("from:%s,to:%s\n",account.address.String(), to.String())
 	return signedTx.Hash(), nil
 }
 
-func (bp *BatchParallelProcess) getTransactionReceipt(client *ethclient.Client, task *ReceiptTask) {
+func (bp *BatchSameFromProcess) getTransactionReceipt(client *ethclient.Client, task *ReceiptTask) {
 	// fmt.Println("get receipts:", task.to.String())
 	_, err := client.TransactionReceipt(context.Background(), task.hash)
 	if err != nil {

@@ -14,7 +14,7 @@ import (
 	"github.com/PlatONnetwork/PlatON-Go/ethclient"
 )
 
-type BatchDifProcess struct {
+type BatchSameToProcess struct {
 	accounts AccountList
 	hosts    []string
 
@@ -39,13 +39,13 @@ type BatchDifProcess struct {
 	BatchProcessor
 }
 
-func NewBatchDifProcess(accounts AccountList, hosts []string, maxSendTxns, proportion int) *BatchDifProcess {
-	bp := &BatchDifProcess{
+func NewBatchSameToProcess(accounts AccountList, hosts []string, maxSendTxns, proportion int) *BatchSameToProcess {
+	bp := &BatchSameToProcess{
 		accounts:    accounts,
 		hosts:       hosts,
 		sendCh:      make(chan *Account, len(accounts)),
-		acceptCh:    make(chan common.Address, len(accounts)*maxSendTxns),
-		waitCh:      make(chan *ReceiptTask, len(accounts)*maxSendTxns),
+		acceptCh:    make(chan common.Address, len(accounts)),
+		waitCh:      make(chan *ReceiptTask, len(accounts)),
 		signer:      types.NewEIP155Signer(big.NewInt(ChainId)),
 		exit:        make(chan struct{}),
 		sents:       0,
@@ -58,7 +58,7 @@ func NewBatchDifProcess(accounts AccountList, hosts []string, maxSendTxns, propo
 	return bp
 }
 
-func (bp *BatchDifProcess) Start() {
+func (bp *BatchSameToProcess) Start() {
 	fmt.Println("Start generate accept account")
 	bp.GenAcceptAccount()
 	fmt.Println("Generate accept account ok")
@@ -75,17 +75,17 @@ func (bp *BatchDifProcess) Start() {
 	fmt.Println("start success")
 }
 
-func (bp *BatchDifProcess) Stop() {
+func (bp *BatchSameToProcess) Stop() {
 	close(bp.exit)
 }
 
-func (bp *BatchDifProcess) Pause() {
+func (bp *BatchSameToProcess) Pause() {
 	bp.cond.L.Lock()
 	defer bp.cond.L.Unlock()
 	bp.paused = true
 }
 
-func (bp *BatchDifProcess) Resume() {
+func (bp *BatchSameToProcess) Resume() {
 	bp.cond.L.Lock()
 	defer bp.cond.L.Unlock()
 	if !bp.paused {
@@ -95,7 +95,7 @@ func (bp *BatchDifProcess) Resume() {
 	bp.cond.Signal()
 }
 
-func (bp *BatchDifProcess) GenAcceptAccount() {
+func (bp *BatchSameToProcess) GenAcceptAccount() {
 	for i := 0; i < len(bp.accounts); i++ {
 		pk, err := crypto.GenerateKey()
 		if err != nil {
@@ -106,11 +106,11 @@ func (bp *BatchDifProcess) GenAcceptAccount() {
 	}
 }
 
-func (bp *BatchDifProcess) SetSendInterval(d time.Duration) {
+func (bp *BatchSameToProcess) SetSendInterval(d time.Duration) {
 	bp.sendInterval.Store(d)
 }
 
-func (bp *BatchDifProcess) report() {
+func (bp *BatchSameToProcess) report() {
 	timer := time.NewTimer(time.Second)
 	for {
 		select {
@@ -126,7 +126,7 @@ func (bp *BatchDifProcess) report() {
 	}
 }
 
-func (bp *BatchDifProcess) perform(host string) {
+func (bp *BatchSameToProcess) perform(host string) {
 	client, err := ethclient.Dial(host)
 	if err != nil {
 		panic(err)
@@ -135,6 +135,7 @@ func (bp *BatchDifProcess) perform(host string) {
 	count := 0
 	st := 0
 	var to common.Address
+	to = <-bp.acceptCh
 	for {
 		bp.cond.L.Lock()
 		if bp.paused {
@@ -145,19 +146,19 @@ func (bp *BatchDifProcess) perform(host string) {
 		select {
 		case act := <-bp.sendCh:
 			if count < bp.proportion {
-				to = <-bp.acceptCh
 				if err := bp.sendDifToAddrTransaction(client, act, to); err == nil {
 					count++
 				}
+				to = <-bp.acceptCh
 			} else {
-				if st < bp.maxSendTxns {
-					if err := bp.sendSameToAddrTransaction(client, act, to); err == nil {
-						st++
-					}
-				} else {
+				if err := bp.sendSameToAddrTransaction(client, act, to); err == nil {
+					st++
+				}
+				if st >= bp.maxSendTxns {
+					bp.acceptCh <- to
 					count = 0
 					st = 0
-					bp.sendCh <- act
+					to = <-bp.acceptCh
 				}
 			}
 		case task := <-bp.waitCh:
@@ -168,7 +169,7 @@ func (bp *BatchDifProcess) perform(host string) {
 	}
 }
 
-func (bp *BatchDifProcess) sendSameToAddrTransaction(client *ethclient.Client, act *Account, to common.Address) error {
+func (bp *BatchSameToProcess) sendSameToAddrTransaction(client *ethclient.Client, act *Account, to common.Address) error {
 	hash, err := bp.sendTransaction(client, act, to)
 	if err != nil {
 		go func() {
@@ -187,7 +188,7 @@ func (bp *BatchDifProcess) sendSameToAddrTransaction(client *ethclient.Client, a
 	return nil
 }
 
-func (bp *BatchDifProcess) sendDifToAddrTransaction(client *ethclient.Client, act *Account, to common.Address) error {
+func (bp *BatchSameToProcess) sendDifToAddrTransaction(client *ethclient.Client, act *Account, to common.Address) error {
 	hash, err := bp.sendTransaction(client, act, to)
 	if err != nil {
 		go func() {
@@ -208,7 +209,7 @@ func (bp *BatchDifProcess) sendDifToAddrTransaction(client *ethclient.Client, ac
 	return nil
 }
 
-func (bp *BatchDifProcess) nonceAt(client *ethclient.Client, addr common.Address) uint64 {
+func (bp *BatchSameToProcess) nonceAt(client *ethclient.Client, addr common.Address) uint64 {
 	var blockNumber *big.Int
 	nonce, err := client.NonceAt(context.Background(), addr, blockNumber)
 	if err != nil {
@@ -218,7 +219,7 @@ func (bp *BatchDifProcess) nonceAt(client *ethclient.Client, addr common.Address
 	return nonce
 }
 
-func (bp *BatchDifProcess) sendTransaction(client *ethclient.Client, account *Account, to common.Address) (common.Hash, error) {
+func (bp *BatchSameToProcess) sendTransaction(client *ethclient.Client, account *Account, to common.Address) (common.Hash, error) {
 	nonce := bp.nonceAt(client, account.address)
 	tx := types.NewTransaction(
 		nonce,
@@ -227,6 +228,7 @@ func (bp *BatchDifProcess) sendTransaction(client *ethclient.Client, account *Ac
 		21000,
 		big.NewInt(500000000000),
 		nil)
+
 	signedTx, err := types.SignTx(tx, bp.signer, account.privateKey)
 	if err != nil {
 		return common.Hash{}, err
@@ -238,11 +240,11 @@ func (bp *BatchDifProcess) sendTransaction(client *ethclient.Client, account *Ac
 		return common.Hash{}, err
 	}
 	atomic.AddInt32(&bp.sents, 1)
-
+	// fmt.Printf("from:%s,to:%s\n",account.address.String(), to.String())
 	return signedTx.Hash(), nil
 }
 
-func (bp *BatchDifProcess) getTransactionReceipt(client *ethclient.Client, task *ReceiptTask) {
+func (bp *BatchSameToProcess) getTransactionReceipt(client *ethclient.Client, task *ReceiptTask) {
 	// fmt.Println("get receipts:", task.to.String())
 	_, err := client.TransactionReceipt(context.Background(), task.hash)
 	if err != nil {

@@ -241,7 +241,7 @@ func (bp *BatchSameFromProcess) sendTransaction(client *ethclient.Client, accoun
 	err = client.SendTransaction(context.Background(), signedTx)
 	account.lastSent = time.Now()
 	if err != nil {
-		fmt.Printf("send transaction error: %v\n", err)
+		// fmt.Printf("send transaction error: %v\n", err)
 		return common.Hash{}, err
 	}
 	atomic.AddInt32(&bp.sents, 1)
@@ -254,8 +254,8 @@ func (bp *BatchSameFromProcess) getTransactionReceipt(client *ethclient.Client, 
 	_, err := client.TransactionReceipt(context.Background(), task.hash)
 	if err != nil {
 		if time.Since(task.account.lastSent) >= task.account.interval {
-			fmt.Printf("get receipt timeout, address:%s, hash: %s, sendTime: %v, now: %v\n",
-				task.account.address.String(), task.hash.String(), task.account.lastSent, time.Now())
+			// fmt.Printf("get receipt timeout, address:%s, hash: %s, sendTime: %v, now: %v\n",
+			// 	task.account.address.String(), task.hash.String(), task.account.lastSent, time.Now())
 			bp.sendCh <- task.account
 			return
 		}

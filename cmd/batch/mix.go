@@ -264,7 +264,7 @@ func (bp *BatchMixProcess) sendDelegate(client *ethclient.Client, account *Accou
 		}()
 		return
 	}
-	fmt.Println("delegate success:", tx.Hash().String())
+	// fmt.Println("delegate success:", tx.Hash().String())
 	account.nonce = nonce
 	atomic.AddInt32(&bp.sents, 1)
 	go func() {

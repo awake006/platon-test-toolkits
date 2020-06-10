@@ -14,15 +14,21 @@ import (
 )
 
 var (
-	accounts           = parseAccountFile(`all_addr_and_private_keys_bak.json`, 0, 2000, 10000)
+	accounts           = parseAccountFile(`all_addr_and_private_keys.json`, 0, 2000, 10000)
 	hasMoneyAddress    = "lax196278ns22j23awdfj9f2d4vz0pedld8au6xelj"
 	hasMoneyPrivateKey = "a689f0879f53710e9e0c1025af410a530d6381eebb5916773195326e123b822b"
-	urls               = []string{
-		"ws://192.168.9.201:8808",
-		"ws://192.168.9.201:8809",
-		"ws://192.168.9.202:8808", "ws://192.168.9.202:8809",
-		"ws://192.168.9.203:8808", "ws://192.168.9.203:8809",
-		"ws://192.168.9.204:8808", "ws://192.168.9.204:8809",
+	// urls               = []string{
+	// 	"ws://192.168.9.201:8808",
+	// 	"ws://192.168.9.201:8809",
+	// 	"ws://192.168.9.202:8808", "ws://192.168.9.202:8809",
+	// 	"ws://192.168.9.203:8808", "ws://192.168.9.203:8809",
+	// 	"ws://192.168.9.204:8808", "ws://192.168.9.204:8809",
+	// }
+	urls = []string{
+		"ws://192.168.10.221:6790",
+		"ws://192.168.9.222:6790",
+		"ws://192.168.9.223:6790",
+		"ws://192.168.9.224:6790",
 	}
 )
 
@@ -64,7 +70,7 @@ func TestBatchProcess_Start(t *testing.T) {
 }
 
 func TestNewBatchMixProcess_Start(t *testing.T) {
-	nodekey := "d979cc4cb878676a134370d040766c74df1950e84996590cd0d6ea6b468af65d"
+	nodekey := "2acd6fea31ded85178ada84bd126ca0303000f6b883184f3d40504f4e90cef02"
 	bp := NewBatchMixProcess(accounts, urls, nodekey, true, 3)
 	bp.Start()
 	sigs := make(chan os.Signal, 1)
@@ -132,5 +138,6 @@ func TestBatchSameToProcess_Start(t *testing.T) {
 }
 
 func TestInit(t *testing.T) {
-	fmt.Println(contractAddr.String())
+	// fmt.Println(contractAddr.String())
+	fmt.Println(1e7)
 }
